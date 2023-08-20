@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  web:
+    image: nginx:latest
+    restart: "on-failure"
+    depends_on:
+      - client
+    ports:
+      - 80:80
+    volumes:
+      - ./web/nginx.conf:/etc/nginx/nginx.conf
+
+  server:
+    container_name: server
+
+    build:
+      context: server/
+    restart: "on-failure"
+
+    expose:
+      - 8000
+    ports:
+      - 8000:8000
+    volumes:
+      - ./server:/app
+
+  client:
+    container_name: client
+    build:
+      context: client/
+    restart: "on-failure"
+
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+
+    stdin_open: true
+    tty: true
